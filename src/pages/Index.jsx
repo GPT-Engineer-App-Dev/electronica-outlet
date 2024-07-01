@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -14,6 +14,8 @@ const sampleProducts = [
 
 const Index = () => {
   const [cart, setCart] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState(sampleProducts);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const addToCart = (product) => {
@@ -24,11 +26,27 @@ const Index = () => {
     setSelectedProduct(product);
   };
 
+  useEffect(() => {
+    setFilteredProducts(
+      sampleProducts.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl text-center mb-6">Electronics Store</h1>
+      <div className="mb-4">
+        <Input
+          type="text"
+          placeholder="Search products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {sampleProducts.map((product) => (
+        {filteredProducts.map((product) => (
           <Card key={product.id}>
             <CardHeader>
               <CardTitle>{product.name}</CardTitle>
